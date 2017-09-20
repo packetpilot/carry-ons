@@ -1,0 +1,46 @@
+#!/bin/bash
+##
+#   Copyright 2017 @packetpilot <point.it@howiget.email>
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Variables
+LATEST=$(curl -L -s http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT)
+DMGNAME=$(curl -L -s http://download.virtualbox.org/virtualbox/$LATEST \
+  | grep OSX | cut -d '"' -f 2)
+EXTURL=http://download.virtualbox.org/virtualbox/${LATEST}/${DMGNAME}
+MD5SUM=$(curl -L -s http://download.virtualbox.org/virtualbox/$LATEST/MD5SUMS \
+  | grep "${DMGNAME}" | cut -d ' ' -f 1)
+TMPDIR=${3}/tmp/virtualbox
+DMGLOC=${TMPDIR}/VirtualBox.dmg
+VOLPATH=/Volumes/VirtualBox
+PKGLOC=${VOLPATH}/VirtualBox.pkg
+
+
+mkdir ${TMPDIR}
+
+curl -Lso "${DMGLOC}" "${EXTURL}"
+
+if [[ $(md5 -q "${DMGLOC}") != "${MD5SUM}" ]]; then
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+fi
+
+hdiutil mount ${DMGLOC}
+
+installer -pkg ${PKGLOC} -target ${3}
+
+hdiutil unmount ${VOLPATH}
+
+rm -rf ${TMPDIR}

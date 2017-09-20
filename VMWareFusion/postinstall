@@ -1,0 +1,52 @@
+#!/bin/bash
+
+##
+#   Copyright 2017 @packetpilot <point.it@howiget.email>
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# this is a weird one; see https://kb.vmware.com/kb/2058680 regarding why.
+
+# Variables
+VERSION=8.5.8-5824040
+MD5SUM=951cee1f0fa8244a0b967cb816179bbd
+EXTURL=https://download3.vmware.com/software/fusion/file/VMware-Fusion-$VERSION.dmg
+TMPDIR=${3}/tmp/vmwarero
+DMGLOC=${TMPDIR}/FusionPro.dmg
+SCRATCHDIR=${3}/tmp/vmwarerw
+VOLPATH=/Volumes/VMware\ Fusion
+ORIGAPP=${VOLPATH}/VMware\ Fusion.app
+ORIGPKG=${ORIGAPP}/Contents/Library/Deploy\ VMware\ Fusion.mpkg
+MODPKG=${SCRATCHDIR}/VMwareFusionPro.mpkg
+
+mkdir "${TMPDIR}" "${SCRATCHDIR}"
+
+curl -Lso "${DMGLOC}" "${EXTURL}"
+
+if [[ $(md5 -q "${DMGLOC}") != "${MD5SUM}" ]]; then
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+fi
+
+hdiutil mount "${DMGLOC}"
+cp -R  "${ORIGPKG}" "${MODPKG}"
+cp -R "${ORIGAPP}" "${MODPKG}/Contents/00Fusion_Deployment_Items"
+
+hdiutil unmount "${VOLPATH}"
+rm -rf "${TMPDIR}"
+
+installer -pkg \
+  "${MODPKG}" -target ${3}
+
+rm -rf "${SCRATCHDIR}"

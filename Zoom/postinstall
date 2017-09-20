@@ -1,0 +1,37 @@
+#!/bin/bash
+
+##
+#   Copyright 2017 @packetpilot <point.it@howiget.email>
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Variables
+VERSION=4.0.38982.0714
+MD5SUM=9432c9b7f74574b389c045de86be08f0
+EXTURL=https://d11yldzmag5yn.cloudfront.net/prod/$VERSION/zoomusInstaller.pkg
+TMPDIR=${3}/tmp/zoom
+PKGLOC=${TMPDIR}/zoomusInstaller.pkg
+
+mkdir ${TMPDIR}
+
+curl -Lso ${PKGLOC} ${EXTURL}
+
+if [[ $(md5 -q "${PKGLOC}") != "${MD5SUM}" ]]; then
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+fi
+
+installer -pkg ${PKGLOC} -target ${3}
+
+rm -rf ${TMPDIR}

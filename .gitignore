@@ -1,0 +1,8 @@
+.DS_Store
+*.dmg
+*.pkg
+*.gz
+*.bz2
+*.tar
+*~
+*__out__
