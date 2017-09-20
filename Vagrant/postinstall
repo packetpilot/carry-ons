@@ -1,0 +1,46 @@
+#!/bin/bash
+##
+#   Copyright 2017 @packetpilot <point.it@howiget.email>
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Variables
+LATEST=$(curl -L https://releases.hashicorp.com/vagrant/ \
+  | grep "/vagrant/" | head -1 | cut -d '/' -f 3)
+EXTURL=https://releases.hashicorp.com/vagrant/${LATEST}/vagrant_${LATEST}_x86_64.dmg
+SHASUM=$(curl -L \
+  https://releases.hashicorp.com/vagrant/${LATEST}/vagrant_${LATEST}_SHA256SUMS \
+  | grep dmg | cut -d ' ' -f 1)
+TMPDIR=${3}/tmp/vagrant
+DMGLOC=${TMPDIR}/vagrant.dmg
+VOLPATH=/Volumes/Vagrant
+PKGLOC=${VOLPATH}/vagrant.pkg
+
+
+mkdir ${TMPDIR}
+
+curl -Lso "${DMGLOC}" "${EXTURL}"
+
+if [[ $(shasum -a 256 "${DMGLOC}" | cut -d ' ' -f 1) != "${SHASUM}" ]]; then
+  echo "The sha checksum did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+fi
+
+hdiutil mount ${DMGLOC}
+
+installer -pkg ${PKGLOC} -target ${3}
+
+hdiutil unmount ${VOLPATH}
+
+rm -rf ${TMPDIR}

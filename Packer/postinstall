@@ -1,0 +1,39 @@
+#!/bin/bash
+##
+#   Copyright 2017 @packetpilot <point.it@howiget.email>
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Variables
+LATEST=$(curl -L https://releases.hashicorp.com/packer/ \
+  | grep "/packer/" | head -1 | cut -d '/' -f 3)
+EXTURL=https://releases.hashicorp.com/packer/${LATEST}/packer_${LATEST}_darwin_amd64.zip
+SHASUM=$(curl -L \
+  https://releases.hashicorp.com/packer/${LATEST}/packer_${LATEST}_SHA256SUMS \
+  | grep darwin_amd64 | cut -d ' ' -f 1)
+TMPDIR=${3}/tmp/packer
+ZIPLOC=${TMPDIR}/packer.zip
+
+mkdir ${TMPDIR}
+
+curl -Lso "${ZIPLOC}" "${EXTURL}"
+
+if [[ $(shasum -a 256 "${ZIPLOC}" | cut -d ' ' -f 1) != "${SHASUM}" ]]; then
+  echo "The sha checksum did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+fi
+
+unzip -o ${ZIPLOC} -d ${3}/usr/local/bin
+
+rm -rf ${TMPDIR}

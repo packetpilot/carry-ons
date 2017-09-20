@@ -13,7 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-#  Example:  a simple payload-free VMware Fusion  and Fusion Pro  installer
+#  Example:  a simple payload-free Vagrant installer via
+#  "future-resistant" postinstall script
 #
 #  Author:  @packetpilot
 #  Created: 2017-09-20
@@ -22,7 +23,7 @@
 
 include /usr/local/share/luggage/luggage.make
 
-TITLE=VMwareFusion
+TITLE=Vagrant
 REVERSE_DOMAIN=com.example.corp
 PAYLOAD=\
 	pack-script-postinstall
