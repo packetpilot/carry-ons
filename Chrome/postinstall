@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ##
 #   Copyright 2017 @packetpilot <point.it@howiget.email>
 #
@@ -12,20 +14,20 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#
-#  Example:  A payload-free CA installer for the system keychain
-#
-#  Author:  @packetpilot
-#  Created: 2017-09-19
-#  Last Modified: 2017-09-20
-#
-#  Description: add a CA to your System.keychain (for all users) and trust it in
-#  all contexts. This has been verified to work as expected on 10.12 and 10.13.
-#
 
-include /usr/local/share/luggage/luggage.make
+# Variables
+EXTURL=https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
+TMPDIR=${3}/tmp/chrome
+DMGLOC=${TMPDIR}/googlechrome.dmg
 
-TITLE=CustomCA
-REVERSE_DOMAIN=com.example.corp
-PAYLOAD=\
-	pack-script-postinstall
+mkdir "${TMPDIR}"
+
+curl -Lso "${DMGLOC}" "${EXTURL}"
+
+hdiutil attach -nobrowse "${DMGLOC}"
+
+cp -R /Volumes/Google\ Chrome/Google\ Chrome.app "${3}/Applications"
+
+hdiutil unmount /Volumes/Google\ Chrome
+
+rm -rf "${TMPDIR}"

@@ -20,33 +20,37 @@
 # Variables
 VERSION=8.5.8-5824040
 MD5SUM=951cee1f0fa8244a0b967cb816179bbd
-EXTURL=https://download3.vmware.com/software/fusion/file/VMware-Fusion-$VERSION.dmg
-TMPDIR=${3}/tmp/vmwarero
+BASEURL=https://download3.vmware.com/software/fusion/file
+EXTURL=${BASEURL}/VMware-Fusion-${VERSION}.dmg
+TMPDIR=${3}/tmp/vmware
 DMGLOC=${TMPDIR}/FusionPro.dmg
-SCRATCHDIR=${3}/tmp/vmwarerw
 VOLPATH=/Volumes/VMware\ Fusion
 ORIGAPP=${VOLPATH}/VMware\ Fusion.app
 ORIGPKG=${ORIGAPP}/Contents/Library/Deploy\ VMware\ Fusion.mpkg
-MODPKG=${SCRATCHDIR}/VMwareFusionPro.mpkg
+MODPKG=${TMPDIR}/Deploy\ VMware\ Fusion.mpkg
 
-mkdir "${TMPDIR}" "${SCRATCHDIR}"
+# Functions
+hashfail() {
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+}
+
+mkdir "${TMPDIR}"
 
 curl -Lso "${DMGLOC}" "${EXTURL}"
 
 if [[ $(md5 -q "${DMGLOC}") != "${MD5SUM}" ]]; then
-  echo "The md5 hash did not match the expected value. Exiting." \
-    >> /var/log/install.log
-  exit 1
+  hashfail
 fi
 
-hdiutil mount "${DMGLOC}"
-cp -R  "${ORIGPKG}" "${MODPKG}"
+hdiutil attach -nobrowse "${DMGLOC}"
+cp -R "${ORIGPKG}" "${MODPKG}"
 cp -R "${ORIGAPP}" "${MODPKG}/Contents/00Fusion_Deployment_Items"
 
 hdiutil unmount "${VOLPATH}"
-rm -rf "${TMPDIR}"
 
 installer -pkg \
-  "${MODPKG}" -target ${3}
+  "${MODPKG}" -target "${3}"
 
-rm -rf "${SCRATCHDIR}"
+rm -rf "${TMPDIR}"

@@ -13,7 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-#  Example:  a simple payload-free Atom
+#  Example:  a simple payload-free Atom installer
 #
 #  Author:  @packetpilot
 #  Created: 2017-09-20

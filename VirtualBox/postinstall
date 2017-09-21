@@ -15,32 +15,35 @@
 #   limitations under the License.
 
 # Variables
-LATEST=$(curl -L -s http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT)
-DMGNAME=$(curl -L -s http://download.virtualbox.org/virtualbox/$LATEST \
-  | grep OSX | cut -d '"' -f 2)
-EXTURL=http://download.virtualbox.org/virtualbox/${LATEST}/${DMGNAME}
-MD5SUM=$(curl -L -s http://download.virtualbox.org/virtualbox/$LATEST/MD5SUMS \
-  | grep "${DMGNAME}" | cut -d ' ' -f 1)
+LATEST=$(curl -Ls http://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT)
+BASEURL=http://download.virtualbox.org/virtualbox/${LATEST}
+DMGNAME=$(curl -Ls "${BASEURL}" | grep OSX | cut -d '"' -f 2)
+EXTURL=${BASEURL}/${DMGNAME}
+MD5SUM=$(curl -Ls "${BASEURL}"/MD5SUMS | grep "${DMGNAME}" | cut -d ' ' -f 1)
 TMPDIR=${3}/tmp/virtualbox
 DMGLOC=${TMPDIR}/VirtualBox.dmg
 VOLPATH=/Volumes/VirtualBox
 PKGLOC=${VOLPATH}/VirtualBox.pkg
 
+# Functions
+hashfail() {
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+}
 
-mkdir ${TMPDIR}
+mkdir "${TMPDIR}"
 
 curl -Lso "${DMGLOC}" "${EXTURL}"
 
 if [[ $(md5 -q "${DMGLOC}") != "${MD5SUM}" ]]; then
-  echo "The md5 hash did not match the expected value. Exiting." \
-    >> /var/log/install.log
-  exit 1
+  hashfail
 fi
 
-hdiutil mount ${DMGLOC}
+hdiutil attach -nobrowse "${DMGLOC}"
 
-installer -pkg ${PKGLOC} -target ${3}
+installer -pkg "${PKGLOC}" -target "${3}"
 
-hdiutil unmount ${VOLPATH}
+hdiutil unmount "${VOLPATH}"
 
-rm -rf ${TMPDIR}
+rm -rf "${TMPDIR}"

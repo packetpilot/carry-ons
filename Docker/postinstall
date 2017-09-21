@@ -20,14 +20,14 @@ EXTURL=https://download.docker.com/mac/stable/Docker.dmg
 TMPDIR=${3}/tmp/docker
 DMGLOC=${TMPDIR}/Docker.dmg
 
-mkdir ${TMPDIR}
+mkdir "${TMPDIR}"
 
-curl -Lso ${DMGLOC} ${EXTURL}
+curl -Lso "${DMGLOC}" "${EXTURL}"
 
-hdiutil mount ${DMGLOC}
+hdiutil attach -nobrowse "${DMGLOC}"
 
-cp -R /Volumes/Docker/Docker.app ${3}/Applications
+cp -R /Volumes/Docker/Docker.app "${3}/Applications"
 
 hdiutil unmount /Volumes/Docker
 
-rm -rf ${TMPDIR}
+rm -rf "${TMPDIR}"

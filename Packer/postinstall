@@ -17,23 +17,27 @@
 # Variables
 LATEST=$(curl -L https://releases.hashicorp.com/packer/ \
   | grep "/packer/" | head -1 | cut -d '/' -f 3)
-EXTURL=https://releases.hashicorp.com/packer/${LATEST}/packer_${LATEST}_darwin_amd64.zip
-SHASUM=$(curl -L \
-  https://releases.hashicorp.com/packer/${LATEST}/packer_${LATEST}_SHA256SUMS \
+BASEURL=https://releases.hashicorp.com/packer/"${LATEST}"
+EXTURL=${BASEURL}/packer_${LATEST}_darwin_amd64.zip
+SHASUM=$(curl -L "${BASEURL}"/packer_"${LATEST}"_SHA256SUMS \
   | grep darwin_amd64 | cut -d ' ' -f 1)
 TMPDIR=${3}/tmp/packer
 ZIPLOC=${TMPDIR}/packer.zip
 
-mkdir ${TMPDIR}
+# Functions
+hashfail() {
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+}
+mkdir "${TMPDIR}"
 
 curl -Lso "${ZIPLOC}" "${EXTURL}"
 
 if [[ $(shasum -a 256 "${ZIPLOC}" | cut -d ' ' -f 1) != "${SHASUM}" ]]; then
-  echo "The sha checksum did not match the expected value. Exiting." \
-    >> /var/log/install.log
-  exit 1
+  hashfail
 fi
 
-unzip -o ${ZIPLOC} -d ${3}/usr/local/bin
+unzip -o "${ZIPLOC}" -d "${3}"/usr/local/bin
 
-rm -rf ${TMPDIR}
+rm -rf "${TMPDIR}"

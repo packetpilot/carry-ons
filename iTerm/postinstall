@@ -25,11 +25,11 @@ EXTURL=https://iterm2.com/downloads/stable/latest
 TMPDIR=${3}/tmp/iterm
 ZIPLOC=${TMPDIR}/iTerm.zip
 
-mkdir ${TMPDIR}
+mkdir "${TMPDIR}"
 
 curl -Lso \
-  ${ZIPLOC} ${EXTURL}
+  "${ZIPLOC}" "${EXTURL}"
 
-unzip -o ${ZIPLOC} -d ${3}/Applications
+unzip -o "${ZIPLOC}" -d "${3}"/Applications
 
-rm -rf ${TMPDIR}
+rm -rf "${TMPDIR}"

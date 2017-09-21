@@ -13,19 +13,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-#  Example:  A payload-free CA installer for the system keychain
+#  Example:  a simple payload-free Google Chrome installer
 #
 #  Author:  @packetpilot
-#  Created: 2017-09-19
-#  Last Modified: 2017-09-20
-#
-#  Description: add a CA to your System.keychain (for all users) and trust it in
-#  all contexts. This has been verified to work as expected on 10.12 and 10.13.
+#  Created: 2017-09-21
+#  Last Modified: 2017-09-21
 #
 
 include /usr/local/share/luggage/luggage.make
 
-TITLE=CustomCA
+TITLE=Chrome
 REVERSE_DOMAIN=com.example.corp
 PAYLOAD=\
 	pack-script-postinstall

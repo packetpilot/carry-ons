@@ -17,30 +17,34 @@
 # Variables
 LATEST=$(curl -L https://releases.hashicorp.com/vagrant/ \
   | grep "/vagrant/" | head -1 | cut -d '/' -f 3)
-EXTURL=https://releases.hashicorp.com/vagrant/${LATEST}/vagrant_${LATEST}_x86_64.dmg
-SHASUM=$(curl -L \
-  https://releases.hashicorp.com/vagrant/${LATEST}/vagrant_${LATEST}_SHA256SUMS \
+BASEURL=https://releases.hashicorp.com/vagrant/${LATEST}
+EXTURL=${BASEURL}/vagrant_${LATEST}_x86_64.dmg
+SHASUM=$(curl -L "${BASEURL}"/vagrant_"${LATEST}"_SHA256SUMS \
   | grep dmg | cut -d ' ' -f 1)
 TMPDIR=${3}/tmp/vagrant
 DMGLOC=${TMPDIR}/vagrant.dmg
 VOLPATH=/Volumes/Vagrant
 PKGLOC=${VOLPATH}/vagrant.pkg
 
+# Functions
+hashfail() {
+  echo "The md5 hash did not match the expected value. Exiting." \
+    >> /var/log/install.log
+  exit 1
+}
 
-mkdir ${TMPDIR}
+mkdir "${TMPDIR}"
 
 curl -Lso "${DMGLOC}" "${EXTURL}"
 
 if [[ $(shasum -a 256 "${DMGLOC}" | cut -d ' ' -f 1) != "${SHASUM}" ]]; then
-  echo "The sha checksum did not match the expected value. Exiting." \
-    >> /var/log/install.log
-  exit 1
+  hashfail
 fi
 
-hdiutil mount ${DMGLOC}
+hdiutil attach -nobrowse "${DMGLOC}"
 
-installer -pkg ${PKGLOC} -target ${3}
+installer -pkg "${PKGLOC}" -target "${3}"
 
-hdiutil unmount ${VOLPATH}
+hdiutil unmount "${VOLPATH}"
 
-rm -rf ${TMPDIR}
+rm -rf "${TMPDIR}"
