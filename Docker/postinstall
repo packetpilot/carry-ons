@@ -20,7 +20,7 @@ EXTURL=https://download.docker.com/mac/stable/Docker.dmg
 TMPDIR=${3}/tmp/docker
 DMGLOC=${TMPDIR}/Docker.dmg
 
-mkdir "${TMPDIR}"
+mkdir -p "${TMPDIR}"
 
 curl -Lso "${DMGLOC}" "${EXTURL}"
 

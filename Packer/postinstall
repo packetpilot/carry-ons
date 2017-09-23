@@ -30,7 +30,7 @@ hashfail() {
     >> /var/log/install.log
   exit 1
 }
-mkdir "${TMPDIR}"
+mkdir -p "${TMPDIR}"
 
 curl -Lso "${ZIPLOC}" "${EXTURL}"
 

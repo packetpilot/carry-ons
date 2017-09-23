@@ -1,5 +1,3 @@
-#!/bin/bash
-
 ##
 #   Copyright 2017 @packetpilot <point.it@howiget.email>
 #
@@ -14,22 +12,18 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+#
+#  Example:  a simple payload-free Prometheus installer via
+#  "future-resistant" postinstall script
+#
+#  Author:  @packetpilot
+#  Created: 2017-09-22
+#  Last Modified: 2017-09-22
+#
 
-# This script doesn't _seem_ polite, but it's been tested with an old 3.0.4
-# version running while 3.1.1 updates right behind it. Logs continued to tail
-# just fine. So, while it might be optimal for login/logout hook, or at
-# loginwindow, it also seems to non-disruptively do the job on-the-fly.
+include /usr/local/share/luggage/luggage.make
 
-# Variables
-EXTURL=https://iterm2.com/downloads/stable/latest
-TMPDIR=${3}/tmp/iterm
-ZIPLOC=${TMPDIR}/iTerm.zip
-
-mkdir -p "${TMPDIR}"
-
-curl -Lso \
-  "${ZIPLOC}" "${EXTURL}"
-
-unzip -o "${ZIPLOC}" -d "${3}"/Applications
-
-rm -rf "${TMPDIR}"
+TITLE=prometheus
+REVERSE_DOMAIN=com.example.corp
+PAYLOAD=\
+	pack-script-postinstall

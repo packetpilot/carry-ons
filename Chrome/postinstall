@@ -20,7 +20,7 @@ EXTURL=https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
 TMPDIR=${3}/tmp/chrome
 DMGLOC=${TMPDIR}/googlechrome.dmg
 
-mkdir "${TMPDIR}"
+mkdir -p "${TMPDIR}"
 
 curl -Lso "${DMGLOC}" "${EXTURL}"
 

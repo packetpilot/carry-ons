@@ -20,7 +20,7 @@ EXTURL=https://atom.io/download/mac
 TMPDIR=${3}/tmp/atom
 ZIPLOC=${TMPDIR}/atom.zip
 
-mkdir "${TMPDIR}"
+mkdir -p "${TMPDIR}"
 
 curl -Lso \
   "${ZIPLOC}" "${EXTURL}"

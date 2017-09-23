@@ -28,9 +28,7 @@ DIRPERSISTENCE=no # 'no' == no, anyhting else == yes
 FILEPERSISTENCE=no # 'no' == no, anyhting else == yes
 RANDFILLPASSES=3 # only used in cases where FILEPERSISTENCE=no
 
-if [ ! -d "${CADIR}" ]; then
-  mkdir "${CADIR}"
-fi
+mkdir -p "${CADIR}"
 
 cat > "${CAFILE}" <<EOF
 -----BEGIN CERTIFICATE-----

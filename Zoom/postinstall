@@ -30,7 +30,7 @@ hashfail() {
   exit 1
 }
 
-mkdir "${TMPDIR}"
+mkdir -p "${TMPDIR}"
 
 curl -Lso "${PKGLOC}" "${EXTURL}"
 
