@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ##
 #   Copyright 2017 @packetpilot <point.it@howiget.email>
 #
@@ -15,29 +16,21 @@
 #   limitations under the License.
 
 # Variables
-LATEST=$(curl -L https://releases.hashicorp.com/packer/ \
-  | grep "/packer/" | head -1 | cut -d '/' -f 3)
-BASEURL=https://releases.hashicorp.com/packer/"${LATEST}"
-EXTURL=${BASEURL}/packer_${LATEST}_darwin_amd64.zip
-SHASUM=$(curl -L "${BASEURL}"/packer_"${LATEST}"_SHA256SUMS \
-  | grep darwin_amd64 | cut -d ' ' -f 1)
-TMPDIR=${3}/tmp/packer
-ZIPLOC=${TMPDIR}/packer.zip
+EXTURL=https://dl.google.com/chrome-remote-desktop/chromeremotedesktop.dmg
+TMPDIR=/tmp/chromote
+DMGLOC=${TMPDIR}/chromeremotedesktop.dmg
+VOLNAME=/Volumes/Chrome\ Remote\ Desktop\ Host*
 
-# Functions
-hashfail() {
-  echo "The sha hash did not match the expected value. Exiting." \
-    >> /var/log/install.log
-  exit 1
-}
 mkdir -p "${TMPDIR}"
 
-curl -Lso "${ZIPLOC}" "${EXTURL}"
+curl -Lso "${DMGLOC}" "${EXTURL}"
 
-if [[ $(shasum -a 256 "${ZIPLOC}" | cut -d ' ' -f 1) != "${SHASUM}" ]]; then
-  hashfail
-fi
+hdiutil attach -nobrowse "${DMGLOC}"
 
-unzip -o "${ZIPLOC}" -d "${3}"/usr/local/bin
+VOLNAME=/Volumes/$(grep "Chrome Remote Desktop" <(ls /Volumes))
+
+installer -pkg "${VOLNAME}/Chrome Remote Desktop Host.pkg" -target "${3}"
+
+hdiutil unmount "${VOLNAME}"
 
 rm -rf "${TMPDIR}"
