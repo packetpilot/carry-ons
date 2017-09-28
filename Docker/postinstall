@@ -17,7 +17,7 @@
 
 # Variables
 EXTURL=https://download.docker.com/mac/stable/Docker.dmg
-TMPDIR=${3}/tmp/docker
+TMPDIR=/tmp/docker
 DMGLOC=${TMPDIR}/Docker.dmg
 
 mkdir -p "${TMPDIR}"

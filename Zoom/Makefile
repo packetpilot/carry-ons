@@ -13,11 +13,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-#  Example:  a simple payload-free Zoom installer
+#  Example:  a simple payload-free Zoom installer via
+#  "future-resistant" postinstall script
 #
 #  Author:  @packetpilot
 #  Created: 2017-09-20
-#  Last Modified: 2017-09-20
+#  Last Modified: 2017-09-27
 #
 
 include /usr/local/share/luggage/luggage.make

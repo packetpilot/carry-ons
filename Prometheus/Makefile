@@ -23,7 +23,7 @@
 
 include /usr/local/share/luggage/luggage.make
 
-TITLE=prometheus
+TITLE=Prometheus
 REVERSE_DOMAIN=com.example.corp
 PAYLOAD=\
 	pack-script-postinstall

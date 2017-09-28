@@ -19,7 +19,7 @@
 LATEST=$(grep "release" <(curl -L https://tunnelblick.net) \
   | awk '/release/{i++}i==2' | cut -d '/' -f 3 | cut -d '"' -f 1)
 EXTURL=https://tunnelblick.net/release/"${LATEST}"
-TMPDIR=${3}/tmp/tunnelblick
+TMPDIR=/tmp/tunnelblick
 DMGLOC=${TMPDIR}/tunnelblick.dmg
 VOLPATH=/Volumes/Tunnelblick
 SHASUM=$(grep "SHA256" <(curl -L https://tunnelblick.net/downloads.html) \

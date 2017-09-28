@@ -16,31 +16,16 @@
 #   limitations under the License.
 
 # Variables
-VERSION=4.0.38982.0714
-MD5SUM=9432c9b7f74574b389c045de86be08f0
-BASEURL=https://d11yldzmag5yn.cloudfront.net/prod/${VERSION}
-EXTURL=${BASEURL}/zoomusInstaller.pkg
-TMPDIR=${3}/tmp/zoom
+EXTURL=https://zoom.us/client/latest/zoomusInstaller.pkg
+TMPDIR=/tmp/zoom
 PKGLOC=${TMPDIR}/zoomusInstaller.pkg
-
-# Functions
-hashfail() {
-  echo "The md5 hash did not match the expected value. Exiting." \
-    >> /var/log/install.log
-  exit 1
-}
 
 mkdir -p "${TMPDIR}"
 
 curl -Lso "${PKGLOC}" "${EXTURL}"
 
-if [[ $(md5 -q "${PKGLOC}") != "${MD5SUM}" ]]; then
-  hashfail
-fi
-
 installer -pkg "${PKGLOC}" -target "${3}"
 
-sleep 1
 killall zoom.us # since it lauches rather impolitely
 
 rm -rf "${TMPDIR}"

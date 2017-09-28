@@ -17,7 +17,7 @@
 
 # Variables
 EXTURL=https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
-TMPDIR=${3}/tmp/chrome
+TMPDIR=/tmp/chrome
 DMGLOC=${TMPDIR}/googlechrome.dmg
 
 mkdir -p "${TMPDIR}"

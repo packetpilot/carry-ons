@@ -21,7 +21,7 @@ BASEURL=https://releases.hashicorp.com/vagrant/${LATEST}
 EXTURL=${BASEURL}/vagrant_${LATEST}_x86_64.dmg
 SHASUM=$(curl -L "${BASEURL}"/vagrant_"${LATEST}"_SHA256SUMS \
   | grep dmg | cut -d ' ' -f 1)
-TMPDIR=${3}/tmp/vagrant
+TMPDIR=/tmp/vagrant
 DMGLOC=${TMPDIR}/vagrant.dmg
 VOLPATH=/Volumes/Vagrant
 PKGLOC=${VOLPATH}/vagrant.pkg

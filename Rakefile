@@ -13,25 +13,40 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-desc "Make all pkgs"
-task :pkgs => :clean do
-  `for i in ./*/; do (cd $i && make pkg); done`
-  `mkdir -p __out__ && find . -path ./__out__ -prune -o -name '*.pkg' -exec mv \
-    -f '{}' __out__ ';'`
-end
-
-desc "Make all dmgs"
-task :dmgs => :clean do
-  `for i in ./*/; do (cd $i && make dmg); done`
-  `mkdir -p __out__ && find . -path ./__out__ -prune -o -name '*.dmg' -exec mv \
-    -f '{}' __out__ ';'`
-end
-
 desc "Clean artifacts"
 task :clean do
-  `find . -name .DS_Store -exec rm -v '{}' ';'`
-  `find . -name '.*~' -exec rm -v '{}' ';'`
-  `find . -name '*.dmg' -exec rm -f '{}' ';'`
-  `find . -name '*.pkg' -exec rm -f '{}' ';'`
-  `rm -rf __out__`
+  FileUtils.rm_r("./__out__") if Dir.exists?("./__out__")
 end
+
+task :mkpkgs => [:clean] do
+  sh "mkdir -p __out__", verbose: false
+  Dir.glob("./*/") do |pkg|
+    next if pkg == "./__out__/"
+    puts "Making #{pkg}"
+    sh "make -C #{pkg} pkg", verbose: false
+    puts "#{pkg} package created"
+  end
+  sh "mv */*.pkg ./__out__", verbose: false
+end
+
+task :mkdmgs => [:clean] do
+  sh "mkdir -p __out__", verbose: false
+  Dir.glob("./*/") do |pkg|
+    next if pkg == "./__out__/"
+    puts "Making #{pkg}"
+    sh "make -C #{pkg} dmg", verbose: false
+    puts "#{pkg} disc image created"
+  end
+  sh "mv */*.dmg ./__out__", verbose: false
+  sh "find . -name '*.pkg' -exec rm -f '{}' ';'", verbose: false
+end
+
+task :shuffpkgs => [:mkpkgs]
+
+task :shuffdmgs => [:mkdmgs]
+
+desc "Make packages"
+task :pkgs => :shuffpkgs
+
+desc "Make disc images"
+task :dmgs => :shuffdmgs

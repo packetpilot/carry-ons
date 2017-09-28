@@ -22,7 +22,7 @@
 
 # Variables
 EXTURL=https://iterm2.com/downloads/stable/latest
-TMPDIR=${3}/tmp/iterm
+TMPDIR=/tmp/iterm
 ZIPLOC=${TMPDIR}/iTerm.zip
 
 mkdir -p "${TMPDIR}"

@@ -17,7 +17,7 @@
 
 # Variables
 EXTURL=https://atom.io/download/mac
-TMPDIR=${3}/tmp/atom
+TMPDIR=/tmp/atom
 ZIPLOC=${TMPDIR}/atom.zip
 
 mkdir -p "${TMPDIR}"

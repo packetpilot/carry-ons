@@ -21,7 +21,7 @@ URLBASE=https://github.com/prometheus/prometheus/releases
 VERS=$(curl -s "${URLBASE}"/latest 2>&1 \
   | cut -d '/' -f8 | cut -d '"' -f1 | cut -c 2-)
 EXTURL="${URLBASE}"/download/v"${VERS}"/prometheus-"${VERS}".darwin-amd64.tar.gz
-TMPDIR=${3}/tmp/prometheus
+TMPDIR=/tmp/prometheus
 TARLOC=${TMPDIR}/prometheus.tar.gz
 TARGET=${3}/usr/local/share/prometheus
 TARGEXECS=${3}/usr/local/bin
