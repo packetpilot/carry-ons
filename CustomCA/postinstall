@@ -109,6 +109,7 @@ security add-trusted-cert -d -r "${TRUST}" \
 if [ "${FILEPERSISTENCE}" == "no" ]; then
   # srm is gone in 10.12+
   for i in $(seq 1 ${RANDFILLPASSES}); do
+    echo "randfill pass ${i}" 2>&1 # using var to pass shellcheck
     dd if=/dev/urandom of="${CAFILE}" bs=8k count=1 2>&1
   done
   rm "${CAFILE}"

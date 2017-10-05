@@ -18,8 +18,8 @@
 # this is a weird one; see https://kb.vmware.com/kb/2058680 regarding why.
 
 # Variables
-VERSION=8.5.8-5824040
-MD5SUM=951cee1f0fa8244a0b967cb816179bbd
+VERSION=10.0.1-6754183
+MD5SUM=d216a900556039352daec91b36db3484
 BASEURL=https://download3.vmware.com/software/fusion/file
 EXTURL=${BASEURL}/VMware-Fusion-${VERSION}.dmg
 TMPDIR=/tmp/vmware

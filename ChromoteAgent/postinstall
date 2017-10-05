@@ -19,7 +19,6 @@
 EXTURL=https://dl.google.com/chrome-remote-desktop/chromeremotedesktop.dmg
 TMPDIR=/tmp/chromote
 DMGLOC=${TMPDIR}/chromeremotedesktop.dmg
-VOLNAME=/Volumes/Chrome\ Remote\ Desktop\ Host*
 
 mkdir -p "${TMPDIR}"
 

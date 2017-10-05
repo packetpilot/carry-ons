@@ -23,3 +23,10 @@ connection, it's not required for making the packages/disk images.
 
 Building should be rather quick on any Mac, and artifacts should all be tiny.
 After all, that's the point.
+
+### CI with GitLab
+Want your artifacts built by a Mac with luggage (and shellcheck) on commits? You're mostly already good-to-go.
+
+Check out the
+[pipelines page](https://gitlab.com/packetpilot/carry-ons/pipelines) of this
+repo's gitlab.com mirror to see the results.

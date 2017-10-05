@@ -1,0 +1,55 @@
+# .gitlab-ci.yml
+
+# This is an example of a GitLab CE-based CI pipeline.
+# It will do two things:
+#   1) check all bash scripts with `shellcheck`
+#   2) make all pkgs and dmgs and upload them as artifacts to a GitLab server
+#
+# In order to use it, you'd need:
+#   1) a GitLab server (public or private) hosting your carry-ons repo
+#   2) a Mac, with
+#     - shellcheck and luggage installed
+#     - gitlab-runner on that Mac,
+#       - with the 'luggage' tag
+#       - registered with the aforementioned GitLab server
+# https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/install/osx.md
+
+variables:
+  # lots of options; see https://docs.gitlab.com/ce/ci/variables/
+
+stages:
+  - style
+  - build
+
+shellcheck:
+  stage: style
+  script:
+    - for i in $(grep -rl '^#!/bin/bash' .); do
+      shellcheck "${i}";
+      done
+  tags:
+    - luggage
+
+build:
+  stage: build
+  script:
+    - rake pkgs
+  after_script:
+    - rake clean
+  tags:
+    - luggage
+  except:
+    - master
+
+build and release:
+  stage: build
+  script:
+    - rake ci
+  artifacts:
+    when: on_success
+    expire_in: 1 week
+    untracked: true
+  tags:
+    - luggage
+  only:
+    - master

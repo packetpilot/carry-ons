@@ -13,9 +13,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# TODO: parallelize
+
 desc "Clean artifacts"
 task :clean do
   FileUtils.rm_r("./__out__") if Dir.exists?("./__out__")
+  sh "find . -name '*.dmg' -exec rm -f '{}' ';'", verbose: false
+  sh "find . -name '*.pkg' -exec rm -f '{}' ';'", verbose: false
 end
 
 task :mkpkgs => [:clean] do
@@ -35,18 +39,21 @@ task :mkdmgs => [:clean] do
     next if pkg == "./__out__/"
     puts "Making #{pkg}"
     sh "make -C #{pkg} dmg", verbose: false
-    puts "#{pkg} disc image created"
+    puts "#{pkg} disk image created"
   end
   sh "mv */*.dmg ./__out__", verbose: false
   sh "find . -name '*.pkg' -exec rm -f '{}' ';'", verbose: false
 end
 
-task :shuffpkgs => [:mkpkgs]
-
-task :shuffdmgs => [:mkdmgs]
-
 desc "Make packages"
-task :pkgs => :shuffpkgs
+task :pkgs => :mkpkgs
 
-desc "Make disc images"
-task :dmgs => :shuffdmgs
+desc "Make disk images"
+task :dmgs => :mkdmgs
+
+# For use with .gitlab-ci.yml
+task :ci => :clean do
+  puts "Making artifacts..."
+  sh "for i in ./*/; do (cd $i && make dmg); done", verbose: false
+  puts "Complete."
+end
