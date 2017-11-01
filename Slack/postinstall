@@ -1,0 +1,84 @@
+#!/bin/bash
+
+##
+#   Copyright 2017 @packetpilot <point.it@howiget.email>
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Variables
+VER=$(curl https://slack.com/downloads/osx | grep Version | cut -d ' ' -f 2 | cut -d '<' -f 1)
+EXTURL=https://downloads.slack-edge.com/mac_releases/Slack-"${VER}"-macOS.zip
+TMPDIR=/tmp/slack
+ZIPLOC=${TMPDIR}/Slack.zip
+MODPATH=${3}/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/index.js
+
+mkdir -p "${TMPDIR}"
+
+curl -Lso \
+  "${ZIPLOC}" "${EXTURL}"
+
+unzip -o "${ZIPLOC}" -d "${3}"/Applications
+
+rm -rf "${TMPDIR}"
+
+# comment/nuke the following if you don't want the darkness
+cat >> "${MODPATH}" <<'EOF'
+
+// slack-black-theme addendum per https://github.com/widget-/slack-black-theme
+// First make sure the wrapper app is loaded
+document.addEventListener("DOMContentLoaded", function() {
+
+   // Then get its webviews
+   let webviews = document.querySelectorAll(".TeamView webview");
+
+   // Fetch our CSS in parallel ahead of time
+   const cssPath = 'https://cdn.rawgit.com/widget-/slack-black-theme/master/custom.css';
+   let cssPromise = fetch(cssPath).then(response => response.text());
+
+   let customCustomCSS = `
+   :root {
+      /* Modify these to change your theme colors: */
+      --primary: #09F;
+      --text: #CCC;
+      --background: #080808;
+      --background-elevated: #222;
+   }
+   `
+
+   // Insert a style tag into the wrapper view
+   cssPromise.then(css => {
+      let s = document.createElement('style');
+      s.type = 'text/css';
+      s.innerHTML = css + customCustomCSS;
+      document.head.appendChild(s);
+   });
+
+   // Wait for each webview to load
+   webviews.forEach(webview => {
+      webview.addEventListener('ipc-message', message => {
+         if (message.channel == 'didFinishLoading')
+            // Finally add the CSS into the webview
+            cssPromise.then(css => {
+               let script = `
+                     let s = document.createElement('style');
+                     s.type = 'text/css';
+                     s.id = 'slack-custom-css';
+                     s.innerHTML = \`${css + customCustomCSS}\`;
+                     document.head.appendChild(s);
+                     `
+               webview.executeJavaScript(script);
+            })
+      });
+   });
+});
+EOF
