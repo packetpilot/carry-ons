@@ -35,6 +35,8 @@ rm -rf "${TMPDIR}"
 cat >> "${MODPATH}" <<'EOF'
 
 // slack-black-theme addendum per https://github.com/widget-/slack-black-theme
+// Copyright 2017 Bryan Keller (https://github.com/widget-)
+
 // First make sure the wrapper app is loaded
 document.addEventListener("DOMContentLoaded", function() {
 
